@@ -2,37 +2,48 @@ package config
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
-func InitDB() {
+var db *sql.DB
+
+func InitDB() error {
 	err := godotenv.Load(".env.local")
 
 	if err != nil {
-		log.Printf("Warning: Error loading .env.local file: %v\n", err)
+		log.Fatalf("Error loading .env file")
 	}
 
-	connStr := os.Getenv("POSTGRES_URL")
-	db, err := sql.Open("postgres", connStr)
+	var dbConn *sql.DB
+	dbConn, err = sql.Open("postgres", os.Getenv("POSTGRES_URL"))
 
 	if err != nil {
-		fmt.Printf("Error opening DB: %v\n", err)
-		return
+		return err
 	}
 
-	defer db.Close()
+	dbConn.SetMaxOpenConns(25)
+	dbConn.SetMaxIdleConns(5)
+	dbConn.SetConnMaxLifetime(5 * time.Minute)
 
-	err = db.Ping()
-	if err != nil {
-		fmt.Printf("❌ Connection failed: %v\n", err)
-		return
+	if err = dbConn.Ping(); err != nil {
+		return err
 	}
 
-	fmt.Println("✅ Connected to Supabase PostgreSQL successfully!")
+	// Set the global db variable
+	db = dbConn
 
+	return nil
+}
+
+func GetDB() *sql.DB {
+	if db == nil {
+		log.Panic("Database connection not initialized. Call InitDB() first.")
+	}
+	
+	return db
 }
