@@ -2,8 +2,10 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/wunnaaung-dev/payroll-bre/models"
@@ -31,6 +33,12 @@ func CreateEmp(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&employee)
 	if err != nil {
 		utils.RespondWithError(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+
+	validationErrors := utils.ValidateEmployeeData(employee)
+	if len(validationErrors) > 0 {
+		utils.RespondWithError(w, fmt.Sprintf("Validation failed %s", strings.Join(validationErrors, ", ")), http.StatusBadRequest)
 		return
 	}
 
@@ -62,7 +70,14 @@ func UpdateEmployee(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
-	
+
+	validationErrors := utils.CheckEmployeePhone(employee)
+
+	if len(validationErrors) > 0 {
+		utils.RespondWithError(w, fmt.Sprintf("Validation failed %s", strings.Join(validationErrors, ", ")), http.StatusBadRequest)
+		return
+	}
+
 	employee.ID = int64(id)
 	updatedEmployee, err := services.UpdateEmployee(employee)
 

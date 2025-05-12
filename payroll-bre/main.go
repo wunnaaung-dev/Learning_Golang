@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 	"github.com/wunnaaung-dev/payroll-bre/router"
-	"github.com/wunnaaung-dev/payroll-bre/config"
+	"github.com/wunnaaung-dev/payroll-bre/database"
 	"log"
 	"net/http"
 )
 
 func main() {
-	if err := config.InitDB(); err != nil {
+	if err := database.InitDB(); err != nil {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
 	log.Println("Database connection established successfully")

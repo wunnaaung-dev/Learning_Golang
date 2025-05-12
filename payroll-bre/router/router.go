@@ -17,5 +17,10 @@ func Router() *mux.Router {
 
 	router.HandleFunc("/api/employee/{id}", controllers.DeleteEmployee).Methods("DELETE", "OPTIONS")
 
+	router.HandleFunc("/api/teachers", controllers.CreateTeacher).Methods("POST", "OPTIONS")
+
+	router.HandleFunc("/api/teacher/{id}", controllers.UpdateTeacherInfo).Methods("PATCH", "OPTIONS")
+
 	return router
 }
+ 

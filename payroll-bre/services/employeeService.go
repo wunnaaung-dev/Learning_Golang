@@ -3,12 +3,12 @@ package services
 import (
 	"fmt"
 	_ "github.com/lib/pq"
-	"github.com/wunnaaung-dev/payroll-bre/config"
+	"github.com/wunnaaung-dev/payroll-bre/database"
 	"github.com/wunnaaung-dev/payroll-bre/models"
 )
 
 func GetAllEmployees() ([]models.Employee, error) {
-	db := config.GetDB()
+	db := database.GetDB()
 
 	sqlStatement := `SELECT id, created_at, name, type, phone, "isWorking" FROM "Employees" WHERE "isWorking" = true`
 
@@ -36,7 +36,7 @@ func GetAllEmployees() ([]models.Employee, error) {
 }
 
 func InsertEmployee(employee models.CreateEmployeeDTO) (models.Employee, error) {
-	db := config.GetDB()
+	db := database.GetDB()
 
 	sqlStatement := `
 		INSERT INTO "Employees" (name, phone, type)
@@ -61,7 +61,7 @@ func InsertEmployee(employee models.CreateEmployeeDTO) (models.Employee, error) 
 }
 
 func UpdateEmployee(employee models.UpdateEmployeeDTO) (models.Employee, error) {
-	db := config.GetDB()
+	db := database.GetDB()
 
 	tx, err := db.Begin()
 	if err != nil {
@@ -104,7 +104,7 @@ func UpdateEmployee(employee models.UpdateEmployeeDTO) (models.Employee, error) 
 }
 
 func DeleteEmployee(id int) error {
-	db := config.GetDB()
+	db := database.GetDB()
 
 	sqlStatement := `UPDATE "Employees" SET "isWorking" = false WHERE id = $1;`
 
