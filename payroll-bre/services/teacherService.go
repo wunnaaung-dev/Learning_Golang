@@ -10,6 +10,38 @@ import (
 	"github.com/wunnaaung-dev/payroll-bre/models"
 )
 
+func GetAllTeachers() ([]models.TeacherResponseDTO, error) {
+	db := database.GetDB()
+
+	sqlStatement := `SELECT "Employees".id AS teacher_id, "Employees".name, "Employees".phone, "Teachers".subject, "Teachers".role, "Teachers".total_classes_per_month
+						FROM "Employees"
+						RIGHT JOIN "Teachers"
+						ON "Employees".id = "Teachers".teacher_id;`
+
+	rows, err := db.Query(sqlStatement)
+
+	if err != nil {
+		return nil, fmt.Errorf("unable to execute the query %v", err)
+	}
+
+	defer rows.Close()
+
+	var teachers []models.TeacherResponseDTO
+	for rows.Next() {
+		var teacher models.TeacherResponseDTO
+		if err := rows.Scan(&teacher.Teacher_ID, &teacher.Name, &teacher.Phone, &teacher.Subject, &teacher.Role, &teacher.Total_Classes_Per_Month); err != nil {
+			return nil, fmt.Errorf("unable to scan the row: %v", err)
+		}
+		teachers = append(teachers, teacher)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating over rows: %v", err)
+	}
+
+	return teachers, nil
+}
+
 func InsertTeacher(teacher models.CreateTeacherDTO) (models.Teacher, error) {
 	db := database.GetDB()
 

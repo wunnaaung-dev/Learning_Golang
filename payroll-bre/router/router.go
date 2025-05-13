@@ -9,18 +9,20 @@ import (
 func Router() *mux.Router {
 	router := mux.NewRouter()
 
+	// API Endpoints for employees
 	router.HandleFunc("/api/employees", controllers.GetAllEmployees).Methods("GET", "OPTIONS")
-
 	router.HandleFunc("/api/employees", controllers.CreateEmp).Methods("POST", "OPTIONS")
-
 	router.HandleFunc("/api/employee/{id}", controllers.UpdateEmployee).Methods("PATCH", "OPTIONS")
-
 	router.HandleFunc("/api/employee/{id}", controllers.DeleteEmployee).Methods("DELETE", "OPTIONS")
 
+	// API Endpoints for teachers
+	router.HandleFunc("/api/teachers", controllers.GetAllTeachers).Methods("GET", "OPTIONS")
 	router.HandleFunc("/api/teachers", controllers.CreateTeacher).Methods("POST", "OPTIONS")
-
 	router.HandleFunc("/api/teacher/{id}", controllers.UpdateTeacherInfo).Methods("PATCH", "OPTIONS")
+
+	// API Endponts for staffs
+	router.HandleFunc("/api/staffs", controllers.GetAllStaffs).Methods("GET", "OPTIONS")
+	router.HandleFunc("/api/staffs", controllers.CreateStaff).Methods("POST", "OPTIONS")
 
 	return router
 }
- 

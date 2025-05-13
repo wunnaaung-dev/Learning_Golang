@@ -13,6 +13,19 @@ import (
 	"github.com/wunnaaung-dev/payroll-bre/utils"
 )
 
+func GetAllTeachers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	teachers, err := services.GetAllTeachers()
+
+	if err != nil {
+		utils.RespondWithError(w, err.Error(), http.StatusBadRequest)
+		return 
+	}
+
+	utils.RespondWithSuccess(w, teachers, "Teachers fetched successfully")
+
+}
+
 func CreateTeacher(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
