@@ -24,5 +24,10 @@ func Router() *mux.Router {
 	router.HandleFunc("/api/staffs", controllers.GetAllStaffs).Methods("GET", "OPTIONS")
 	router.HandleFunc("/api/staffs", controllers.CreateStaff).Methods("POST", "OPTIONS")
 
+	// API Endpoints for salary
+	router.HandleFunc("/api/salary", controllers.CreateSalary).Methods("POST", "OPTIONS")
+	router.HandleFunc("/api/salary", controllers.GetEmpSalaries).Methods("GET", "OPTIONS")
+	router.HandleFunc("/api/salary/{id}", controllers.UpdateSalary).Methods("PATCH", "OPTIONS")
+
 	return router
 }

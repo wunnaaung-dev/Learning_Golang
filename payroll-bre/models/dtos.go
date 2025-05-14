@@ -32,3 +32,20 @@ type StaffResponseDTO struct {
 	EmployeeBase
 	StaffBase
 }
+
+type CreateSalaryDTO struct {
+	SalaryBase
+}
+
+type SalaryResponseDTO struct {
+	ID             int64   `json:"id"`
+	Name           string  `json:"name"`
+	Type           string  `json:"type"`
+	Monthly_Rate   float64 `json:"monthly_rate"`
+	Rate_Per_Class float64 `json:"rate_per_class"`
+}
+
+type UpdateSalaryDTO struct {
+	Monthly_Rate   float64 `json:"monthly_rate"`
+	Rate_Per_Class float64 `json:"rate_per_class"`
+}
