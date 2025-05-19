@@ -35,6 +35,37 @@ func GetAllEmployees() ([]models.Employee, error) {
 	return employees, nil
 }
 
+func GetEmployeeInfo(id int) (models.Employee, error) {
+	db := database.GetDB()
+
+	var exists bool
+	checkStmt := `SELECT EXISTS(SELECT 1 FROM "Employees" WHERE id = $1)`
+	err := db.QueryRow(checkStmt, id).Scan(&exists)
+	if err != nil {
+		return models.Employee{}, fmt.Errorf("error checking employee existence: %v", err)
+	}
+	if !exists {
+		return models.Employee{}, fmt.Errorf("no employee found with id: %d", id)
+	}
+
+	sqlStatement := `SELECT id, created_at, name, type, phone, "isWorking" FROM "Employees" WHERE id = $1`
+
+	var employee models.Employee
+	err = db.QueryRow(sqlStatement, id).Scan(
+		&employee.ID,
+		&employee.CreatedAt,
+		&employee.Name,
+		&employee.Type,
+		&employee.Phone,
+		&employee.IsWorking,
+	)
+	if err != nil {
+		return models.Employee{}, fmt.Errorf("unable to fetch employee info: %v", err)
+	}
+
+	return employee, nil
+}
+
 func InsertEmployee(employee models.CreateEmployeeDTO) (models.Employee, error) {
 	db := database.GetDB()
 

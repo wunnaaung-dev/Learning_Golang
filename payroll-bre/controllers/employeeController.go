@@ -25,6 +25,25 @@ func GetAllEmployees(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithSuccess(w, employees, "Employees fetched successfully")
 }
 
+func GetEmployee(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		utils.RespondWithError(w, "Invalid employee ID", http.StatusBadRequest)
+		return
+	}
+
+	employee, err := services.GetEmployeeInfo(id)
+	if err != nil {
+		utils.RespondWithError(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	utils.RespondWithSuccess(w, employee, "Employee fetched successfully")
+}
+
 func CreateEmp(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 

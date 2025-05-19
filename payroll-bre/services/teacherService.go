@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-
 	"github.com/wunnaaung-dev/payroll-bre/database"
 	"github.com/wunnaaung-dev/payroll-bre/models"
 )
@@ -40,6 +39,36 @@ func GetAllTeachers() ([]models.TeacherResponseDTO, error) {
 	}
 
 	return teachers, nil
+}
+
+func GetTeacherInfo(id int) (models.TeacherResponseDTO, error) {
+	db := database.GetDB()
+
+	sqlStatement := `
+		SELECT "Employees".id AS teacher_id, "Employees".name, "Employees".phone, "Teachers".subject, "Teachers".role, "Teachers".total_classes_per_month
+		FROM "Employees"
+		RIGHT JOIN "Teachers"
+		ON "Employees".id = "Teachers".teacher_id
+		WHERE "Teachers".teacher_id = $1;
+	`
+
+	var teacher models.TeacherResponseDTO
+	err := db.QueryRow(sqlStatement, id).Scan(
+		&teacher.Teacher_ID,
+		&teacher.Name,
+		&teacher.Phone,
+		&teacher.Subject,
+		&teacher.Role,
+		&teacher.Total_Classes_Per_Month,
+	)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return models.TeacherResponseDTO{}, fmt.Errorf("teacher with ID %d not found", id)
+		}
+		return models.TeacherResponseDTO{}, fmt.Errorf("unable to execute the query: %v", err)
+	}
+
+	return teacher, nil
 }
 
 func InsertTeacher(teacher models.CreateTeacherDTO) (models.Teacher, error) {

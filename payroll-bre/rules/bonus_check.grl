@@ -1,0 +1,15 @@
+rule TeacherCanEarnBonus "Allow only Teachers to earn exam bonus" salience 10 {
+    when
+        Employee.Type == "Teacher"
+    then
+        Result.Message = "Can earn exam bonus";
+        Retract("TeacherCanEarnBonus");
+}
+
+rule OthersCannotEarnBonus "Block others from earning exam bonus" salience 5 {
+    when
+        Employee.Type != "Teacher"
+    then
+        Result.Message = "Cannot earn exam bonus";
+        Retract("OthersCannotEarnBonus");
+}

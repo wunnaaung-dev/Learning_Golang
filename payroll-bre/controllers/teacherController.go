@@ -26,6 +26,25 @@ func GetAllTeachers(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func GetTeacherInfo(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		utils.RespondWithError(w, "Invalid teacher ID", http.StatusBadRequest)
+		return
+	}
+
+	teacher, err := services.GetTeacherInfo(id)
+	if err != nil {
+		utils.RespondWithError(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	utils.RespondWithSuccess(w, teacher, "Teacher info fetched successfully")
+}
+
 func CreateTeacher(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 

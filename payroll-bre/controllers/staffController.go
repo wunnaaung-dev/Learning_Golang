@@ -3,7 +3,9 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
+	"github.com/gorilla/mux"
 	"github.com/wunnaaung-dev/payroll-bre/models"
 	"github.com/wunnaaung-dev/payroll-bre/services"
 	"github.com/wunnaaung-dev/payroll-bre/utils"
@@ -20,6 +22,25 @@ func GetAllStaffs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.RespondWithSuccess(w, staffs, "Staffs retrieved successfully")
+}
+
+func GetStaffByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		utils.RespondWithError(w, "Missing staff ID", http.StatusBadRequest)
+		return
+	}
+
+	staff, err := services.GetStaffByID(id)
+	if err != nil {
+		utils.RespondWithError(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	utils.RespondWithSuccess(w, staff, "Staff retrieved successfully")
 }
 
 func CreateStaff(w http.ResponseWriter, r *http.Request) {

@@ -1,5 +1,7 @@
 package models
 
+import "encoding/json"
+
 type CreateEmployeeDTO struct {
 	EmployeeBase
 }
@@ -48,4 +50,12 @@ type SalaryResponseDTO struct {
 type UpdateSalaryDTO struct {
 	Monthly_Rate   float64 `json:"monthly_rate"`
 	Rate_Per_Class float64 `json:"rate_per_class"`
+}
+
+type UpdateAdjustmentDTO struct {
+	Records json.RawMessage `json:"records"`
+}
+
+type Result struct {
+	Message string
 }

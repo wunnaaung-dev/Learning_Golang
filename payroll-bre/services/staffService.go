@@ -1,6 +1,8 @@
 package services
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/wunnaaung-dev/payroll-bre/database"
@@ -53,6 +55,43 @@ func GetAllStaffs() ([]models.StaffResponseDTO, error) {
 	}
 
 	return staffs, nil
+}
+
+func GetStaffByID(staffID int) (models.StaffResponseDTO, error) {
+	db := database.GetDB()
+
+	sqlStatement := `
+		SELECT 
+			"Employees".id AS staff_id, 
+			"Employees".name, 
+			"Employees".phone, 
+			"Employees".type, 
+			"Staffs".role, 
+			"Staffs"."maxLeave"
+		FROM "Employees"
+		RIGHT JOIN "Staffs"
+		ON "Employees".id = "Staffs".staff_id
+		WHERE "Employees".type = 'Staff' AND "Employees".id = $1;
+	`
+
+	var staff models.StaffResponseDTO
+
+	err := db.QueryRow(sqlStatement, staffID).Scan(
+		&staff.Staff_ID,
+		&staff.Name,
+		&staff.Phone,
+		&staff.Type,
+		&staff.Role,
+		&staff.MaxLeave,
+	)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return models.StaffResponseDTO{}, fmt.Errorf("teacher with ID %d not found", staffID)
+		}
+		return models.StaffResponseDTO{}, fmt.Errorf("unable to execute the query: %v", err)
+	}
+
+	return staff, nil
 }
 
 func InsertStaff(staff models.CreateStaffDTO) (models.Staff, error) {
